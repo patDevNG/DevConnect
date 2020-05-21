@@ -1,0 +1,4 @@
+{
+    "mongoUri":"mongodb+srv://patdev:planks@123@devconnector-m0z3g.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtSecret":"patDevng"
+}
