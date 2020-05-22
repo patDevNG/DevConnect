@@ -38,7 +38,7 @@ async(req,res)=>{
         return res.status(400).json({errors:errors.array()});
     }
     try{
-        let loggedInUser = await User.findOne({email});
+        let loggedInUser = await User.findOne({email}).populate('profile');
         if(!loggedInUser){
             return res.status(400).json({error:[{message:"Invalid credentials"}]})
         }
@@ -64,7 +64,7 @@ async(req,res)=>{
                 console.log(token);
                 
                 if(err)throw err;
-              return  res.status(200).json({data:[{token:token}]})
+              return  res.status(200).json({data:[{token:token,}]})
        
             }
             )
@@ -76,5 +76,6 @@ async(req,res)=>{
     }
     
 });
+
 
 module.exports = router;
