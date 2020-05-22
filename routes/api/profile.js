@@ -156,68 +156,6 @@ router.get('/user/:user_id', async(req,res)=>{
  }
 
 });
-//@route         DELETe/api/v1/profile
-//@description   Delete profile, user and post
-//@access        Public
-
-router.delete('/', auth, async(req,res)=>{
-  try {
-    //remove profile;
-    await Profile.findOneAndRemove({user:req.user.id});
-    //remove user
-    await User.findOneAndRemove({_id:req.user.id});
-
-    res.status(200).json({data:[{message:"Profile deleted"}]})
-  } catch (e) {
-    console.log(e.message);
-   return res.status(500).json({error:[{message:'Internal Server errror'}]});
-  }
-});
-
-
-
-// router.post('/expe',[auth, [
-// check('title','Title is required').not().isEmpty,
-// check('company','company is required').not().isEmpty,
-// check('from','from date is required').not().isEmpty,
-// ]
-// ], async(req,res)=>{
-//   console.log(req.body);
-  
-  // const errors  = validationResult(req);
-  // if(!errors.isEmpty){
-  //   return res.status(400).json({errors:errors.array()})
-  // }
-  // const{
-  //   title,
-  //   company,
-  //   location,
-  //   from,
-  //   to,
-  //   current,
-  //   description
-  // } = req.body
-
-  // const newExp ={
-  //   title,
-  //   company,
-  //   location,
-  //   from,
-  //   to,
-  //   current,
-  //   description
-  // }
-  // try {
-  //   const profile  = await Profile.findOne({user:req.user.id});
-  //   profile.experience.unshift(newExp);
-  //   await profile.save();
-  //   return res.status(200).json({data:[{data:profile}]})
-  // } catch (e) {
-  //   console.log(e.message);
-  //   res.status(500).json({error:[{message:"Internal Server error"}]})
-    
-  // }
-// });
 
 //@route         PUT/api/v1/profile/experience
 //@description   update the experience in the profile
@@ -227,12 +165,11 @@ router.put('/experience', [auth,
   [
     check('title', 'title is required').not().isEmpty(),
     check('company', 'company is required').not().isEmpty(),
-    check('title', 'from dat is required').not().isEmpty()
+    check('from', 'From is required').not().isEmpty()
 
 ]], async(req,res)=>{
   console.log(req.body);
   console.log(req.user.id);
-  const userId = req.user.id; 
   const errors = validationResult(req);
   if(!errors.isEmpty()){
    return res.status(400).json({errors:[{message:errors.array()}]})
@@ -286,5 +223,74 @@ router.delete('/experience/:exp_id', auth, async(req,res)=>{
     
     return res.status(500).json({error:[{message:"Internal server error"}]});
   }
-})
+});
+
+//@route         PUT/api/v1/profile/education
+//@description   update the education in the profile
+//@access        Private
+
+router.put('/education', [auth, 
+  [
+    check('school', 'School is required').not().isEmpty(),
+    check('degree', 'Degree is required').not().isEmpty(),
+    check('fieldofstudy', 'Field of study is required').not().isEmpty(),
+    check('from', 'From date is required').not().isEmpty()
+
+]], async(req,res)=>{
+  console.log(req.body);
+  console.log(req.user.id);
+  const errors = validationResult(req);
+  if(!errors.isEmpty()){
+   return res.status(400).json({errors:[{message:errors.array()}]})
+  }
+  const {
+    school,
+    degree,
+    fieldofstudy,
+    current,
+    from,
+    to,
+    description
+  } = req.body;
+
+  const newEdu = {
+    school,
+    degree,
+    fieldofstudy,
+    current,
+    from,
+    to,
+    description
+  }
+  try {
+    // console.log(newExp);
+    console.log(req.user.id)
+    const profile = await Profile.findOne({user:req.user.id});
+    profile.education.unshift(newEdu);
+    await profile.save();
+    res.status(200).json({data:[{data:profile}]})
+  } catch (e) {
+    console.log(e.message);
+    return res.status(500).json({error:[{message:"internal server error"}]})
+  }
+  
+});
+
+//@route         DELETE/api/v1/profile/education/:edu_id
+//@description   update the education in the profile
+//@access        Private
+
+router.delete('/education/:edu_id', auth, async(req,res)=>{
+  try {
+    const profile = await Profile.findOne({user:req.user.id});
+    const removeIndex = profile.education.map(item =>item.id).indexOf(req.params.edu_id);
+    profile.education.splice(removeIndex,1);
+    await profile.save();
+    return res.status(200).json({data:[{data:profile}]})
+  } catch (e) {
+    console.log(e.message);
+    
+    return res.status(500).json({error:[{message:"Internal server error"}]});
+  }
+});
 module.exports = router;
