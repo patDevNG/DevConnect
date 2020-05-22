@@ -232,6 +232,7 @@ router.put('/experience', [auth,
 ]], async(req,res)=>{
   console.log(req.body);
   console.log(req.user.id);
+  const userId = req.user.id; 
   const errors = validationResult(req);
   if(!errors.isEmpty()){
    return res.status(400).json({errors:[{message:errors.array()}]})
@@ -257,17 +258,33 @@ router.put('/experience', [auth,
   }
   try {
     console.log(newExp);
-    const profile = Profile.findOne({user:req.user.id})
-    // console.log(profile);
-    console.log(typeof(profile.experience));
-    ;
-    console.log(profile.experience)
-    await profile.save()
+    console.log(req.user.id)
+    const profile = await Profile.findOne({user:req.user.id});
+    profile.experience.unshift(newExp);
+    await profile.save();
     res.status(200).json({data:[{data:profile}]})
   } catch (e) {
     console.log(e.message);
     return res.status(500).json({error:[{message:"internal server error"}]})
   }
   
+});
+
+//@route         DELETE/api/v1/profile/experience/:exp_id
+//@description   update the experience in the profile
+//@access        Private
+
+router.delete('/experience/:exp_id', auth, async(req,res)=>{
+  try {
+    const profile = await Profile.findOne({user:req.user.id});
+    const removeIndex = profile.experience.map(item =>item.id).indexOf(req.params.exp_id);
+    profile.experience.splice(removeIndex,1);
+    await profile.save();
+    return res.status(200).json({data:[{data:profile}]})
+  } catch (e) {
+    console.log(e.message);
+    
+    return res.status(500).json({error:[{message:"Internal server error"}]});
+  }
 })
 module.exports = router;
