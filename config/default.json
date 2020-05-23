@@ -1,5 +1,7 @@
 {
     "mongoUri":"mongodb://localhost:27017/devcon",
  "mongoUri1":"mongodb+srv://patdev:planks@123@devconnector-m0z3g.mongodb.net/test?retryWrites=true&w=majority",
-    "jwtSecret":"patDevng"
+    "jwtSecret":"patDevng",
+    "githubClientId":"30e42ea41e7140b6361e",
+    "githubSecret":"a1baba3bb6221c746cf25d4a832c05b6e1ba76e2"
 }
