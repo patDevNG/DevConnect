@@ -6,9 +6,13 @@ import Register from '../src/component/auth/register';
 import Login from '../src/component/auth/login';
 import './App.css';
 
+import {Provider} from 'react-redux';
+import store from './store';
+
 const App= () => {
   return (
-    <Router>
+   <Provider store={store}>
+      <Router>
     <Fragment>
       <Navbar/>
       <Route exact path ="/" component ={Landing}/>
@@ -21,6 +25,7 @@ const App= () => {
       </section>
     </Fragment>
     </Router>
+   </Provider>
   );
 }
 
